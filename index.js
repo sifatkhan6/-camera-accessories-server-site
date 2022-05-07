@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
-app.use(express());
+app.use(express.json());
 
 // user: cameraAccessoriesUser
 // pass: 8ikF2fabcLnFx6Q9
@@ -33,6 +33,12 @@ async function run() {
             const query = {_id: ObjectId(id)};
             const inventory = await inventoryCollection.findOne(query);
             res.send(inventory);
+        })
+
+        app.post('/inventory', async (req, res) => {
+            const newItem = req.body;
+            const result = await inventoryCollection.insertOne(newItem);
+            res.send(result);
         })
     }
     finally {
