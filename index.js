@@ -20,6 +20,7 @@ async function run() {
     try {
         await client.connect();
         const inventoryCollection = client.db('cameraAccessoriesUser').collection('inventory');
+        const myItemCollection = client.db('cameraAccessoriesUser').collection('inventory');
 
         app.get('/inventory', async (req, res) => {
             const query = {};
@@ -45,6 +46,13 @@ async function run() {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const result = await inventoryCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        // add item api 
+        app.post('/inventory', async (req, res) => {
+            const myitem = req.body;
+            const result = await myItemCollection.insertOne(myitem);
             res.send(result);
         })
     }
