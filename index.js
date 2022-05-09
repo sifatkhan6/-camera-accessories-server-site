@@ -10,9 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// user: cameraAccessoriesUser
-// pass: 8ikF2fabcLnFx6Q9
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nwui0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -20,18 +17,17 @@ async function run() {
     try {
         await client.connect();
         const inventoryCollection = client.db('cameraAccessoriesUser').collection('inventory');
-        const myItemCollection = client.db('cameraAccessoriesUser').collection('inventory');
 
         app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = inventoryCollection.find(query);
-            const inventories = await cursor.toArray();
-            res.send(inventories);
+            const inventory = await cursor.toArray();
+            res.send(inventory);
         });
 
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const inventory = await inventoryCollection.findOne(query);
             res.send(inventory);
         })
@@ -44,16 +40,19 @@ async function run() {
 
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await inventoryCollection.deleteOne(query);
             res.send(result);
         });
 
-        // add item api 
-        app.post('/inventory', async (req, res) => {
-            const myitem = req.body;
-            const result = await myItemCollection.insertOne(myitem);
-            res.send(result);
+        // find myItem api 
+        app.get('/inventory', async (req, res) => {
+            const email = req.query?.email;
+            console.log(email);
+            const query = { email: email };
+            const cursor = inventoryCollection.find(query);
+            const myitems = await cursor.toArray();
+            res.send(myitems);
         })
     }
     finally {
