@@ -38,6 +38,21 @@ async function run() {
             res.send(result);
         });
 
+        // quantity decreasing
+        app.put('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateQuantity = req.body;
+            const query = { _id: ObjectId(id) };
+            const options = {upsert: true};
+            const updateDatabase = {
+                $set: {
+                    quantity: updateQuantity.quantity
+                }
+            }
+            const result = await inventoryCollection.updateOne(query, updateDatabase, options);
+            res.send(result);
+        });
+
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
