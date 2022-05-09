@@ -46,14 +46,20 @@ async function run() {
         });
 
         // find myItem api 
-        app.get('/inventory', async (req, res) => {
+        app.get('/myitem', async (req, res) => {
             const email = req.query?.email;
-            console.log(email);
             const query = { email: email };
             const cursor = inventoryCollection.find(query);
             const myitems = await cursor.toArray();
             res.send(myitems);
-        })
+        });
+
+        app.delete('/myitem/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await inventoryCollection.deleteOne(query);
+            res.send(result);
+        });
     }
     finally {
 
